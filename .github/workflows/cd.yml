@@ -1,0 +1,24 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v3
+
+    - name: Simular Deploy
+      run: echo "Iniciando deploy contínuo..."
+      
+    - name: Alerta Discord (Deploy)
+      uses: discord-actions/message@v2
+      with:
+        webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+        message: "🚀 Entrega Contínua (CD) concluída."
